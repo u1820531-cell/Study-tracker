@@ -3,228 +3,300 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StudyAdvisor AI Elite</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <title>StudyAdvisor | Elite AI Command</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #6366f1; --bg: #f8fafc; --card: #ffffff;
-      --text: #1e293b; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --accent: #8b5cf6;
+      --primary: #8b5cf6; --primary-glow: rgba(139, 92, 246, 0.5);
+      --bg: #020617; --card: rgba(15, 23, 42, 0.6);
+      --border: rgba(255, 255, 255, 0.1); --text: #f8fafc;
+      --accent: #ec4899; --success: #10b981;
     }
-    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-    body { margin: 0; background: var(--bg); color: var(--text); transition: all 0.4s; }
-    .app-wrapper { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-    
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 20px; background: var(--card); border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    
-    /* Stats Bar */
-    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
-    .stat-card { background: var(--card); padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-bottom: 4px solid var(--primary); transition: 0.3s; }
-    .stat-card h4 { margin: 0; font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
-    .stat-card span { font-size: 1.4rem; font-weight: 700; display: block; margin-top: 5px; }
 
-    .dashboard { display: grid; grid-template-columns: 1fr 350px; gap: 24px; }
-    .card { background: var(--card); padding: 24px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 24px; }
-    
-    /* AI Suggestion Box */
-    .ai-box { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 20px; border-radius: 16px; margin-bottom: 24px; }
+    * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    body { margin: 0; background: var(--bg); color: var(--text); overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
 
-    /* Subject UI */
-    .subject-card { background: #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 16px; border-left: 5px solid var(--primary); }
-    .chapter-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px; margin: 8px 0; border-radius: 10px; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    
-    /* Progress Bars */
-    .progress-container { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; margin: 10px 0; }
-    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.6s ease; }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background: radial-gradient(circle at 15% 15%, var(--primary-glow) 0%, transparent 35%),
+                  radial-gradient(circle at 85% 85%, rgba(236, 72, 153, 0.15) 0%, transparent 35%);
+      z-index: -1;
+    }
 
-    /* Buttons */
-    button { cursor: pointer; padding: 10px 18px; border-radius: 8px; border: none; font-weight: 600; transition: 0.2s; }
-    .btn-main { background: var(--primary); color: white; width: 100%; border-bottom: 3px solid #4338ca; }
-    .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; }
-    
-    /* Focus Mode */
-    .focus-active { background: #020617; }
-    .focus-active .hide-on-focus { display: none; }
-    .focus-active .app-wrapper { max-width: 500px; margin-top: 10vh; }
+    .app-container { width: 95vw; height: 90vh; display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
+    .col { display: flex; flex-direction: column; gap: 20px; overflow: hidden; }
+
+    .glass-card { background: var(--card); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 28px; padding: 24px; }
+    .execution-hub { align-items: center; justify-content: center; position: relative; }
+    .timer-orb { position: relative; width: 380px; height: 380px; display: flex; align-items: center; justify-content: center; margin: 20px 0; }
+    #timerDisplay { font-family: 'JetBrains Mono', monospace; font-size: 5.5rem; font-weight: 800; text-shadow: 0 0 40px var(--primary-glow); z-index: 2; }
+
+    .scroll-area { overflow-y: auto; flex-grow: 1; padding-right: 8px; }
+    .scroll-area::-webkit-scrollbar { width: 3px; }
+    .scroll-area::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+    .subject-block { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+    .task-item { background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 12px; margin-top: 6px; display: flex; align-items: center; gap: 10px; cursor: pointer; border: 1px solid transparent; }
+    .task-item:hover { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+
+    button { cursor: pointer; border: none; font-weight: 800; border-radius: 12px; padding: 12px 24px; }
+    .btn-engage { background: var(--primary); color: white; width: 100%; font-size: 1rem; box-shadow: 0 0 20px var(--primary-glow); }
+    .btn-secondary { background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border); }
+
+    input[type="number"] { background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 12px; width: 70px; text-align: center; }
+
+    body.focus-active .hide-on-focus { opacity: 0; pointer-events: none; transform: scale(0.95); }
+    body.focus-active .execution-hub { grid-column: 1 / span 3; }
   </style>
 </head>
 <body>
 
-<div class="app-wrapper">
-  <header>
-    <h1>📘 StudyAdvisor <small style="font-weight: 300; opacity: 0.7;">v5.2</small></h1>
-    <div style="display: flex; gap: 10px;">
-        <button class="btn-outline" onclick="exportData()">📥 Backup</button>
-        <button class="btn-outline" onclick="importData()">📤 Restore</button>
-        <button class="btn-main" style="width:auto; padding:8px 15px;" onclick="toggleFocusMode()">Focus Mode</button>
-    </div>
-  </header>
-
-  <div class="stats-bar hide-on-focus">
-    <div class="stat-card"><h4>Chapters</h4><span id="statTotal">0</span></div>
-    <div class="stat-card" style="border-color: var(--success);"><h4>Done</h4><span id="statDone">0</span></div>
-    <div class="stat-card" style="border-color: var(--danger);"><h4>To-Do</h4><span id="statLeft">0</span></div>
-    <div class="stat-card" style="border-color: var(--accent);"><h4>Days Left</h4><span id="statDays">-</span></div>
-  </div>
-
-  <main class="dashboard">
-    <div class="main-content">
-      <section class="ai-box hide-on-focus">
-        <h4 style="margin:0; opacity:0.9; font-size:0.8rem;">🎯 AI PRIORITY SUGGESTION</h4>
-        <p id="aiSuggestion" style="margin:10px 0 0; font-size:1.1rem; font-weight:600;">Add subjects to start AI analysis...</p>
-      </section>
-
-      <section class="card hide-on-focus">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <h3>Curriculum Breakdown</h3>
-          <button class="btn-outline" onclick="addSubject()">+ New Subject</button>
+<div class="app-container">
+  <aside class="col glass-card hide-on-focus">
+    <small style="letter-spacing: 2px; color: var(--primary); font-weight: 800;">COMMAND DATA</small>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+        <div class="glass-card" style="padding: 12px; text-align: center; border-radius: 18px;">
+            <div id="statStreak" style="font-size: 1.4rem; font-weight: 800;">0</div>
+            <small style="color: var(--accent); opacity: 0.8;">STREAK</small>
         </div>
-        <div id="subjectsContainer"></div>
-      </section>
+        <div class="glass-card" style="padding: 12px; text-align: center; border-radius: 18px;">
+            <div id="statDone" style="font-size: 1.4rem; font-weight: 800;">0</div>
+            <small style="color: var(--success); opacity: 0.8;">DONE</small>
+        </div>
+    </div>
+    <div class="scroll-area" id="subjectsContainer" style="margin-top: 15px;"></div>
+    <button class="btn-secondary" onclick="addSubject()" style="font-size: 0.75rem;">+ INITIALIZE SUBJECT</button>
+  </aside>
+
+  <main class="col execution-hub">
+    <div style="text-align: center;">
+      <small style="letter-spacing: 4px; opacity: 0.5;">TACTICAL HUD v4.0</small>
+      <h2 id="currentTaskDisplay" style="font-size: 2rem; margin: 10px 0 0 0;">SYSTEM IDLE</h2>
     </div>
 
-    <aside class="sidebar">
-      <section class="card" style="text-align: center;">
-        <h3 id="quoteDisplay" style="font-size: 0.8rem; color: var(--primary); min-height: 40px;">"The secret of getting ahead is getting started."</h3>
-        <div id="timerDisplay" style="font-size: 4rem; font-weight: 700; color: var(--primary); margin: 10px 0; font-family: monospace;">25:00</div>
-        <button class="btn-main" id="timerBtn" onclick="handleTimer()">Start Session</button>
-      </section>
-      
-      <section class="card hide-on-focus">
-        <h3>Analytics</h3>
-        <canvas id="chart" height="180"></canvas>
-        <div style="margin-top:20px;">
-          <label><small>Target Exam Date</small></label>
-          <input type="date" id="examDate" style="width:100%; padding:10px; margin-top:8px; border-radius:8px; border:1px solid #ddd;" onchange="saveSettings()">
-        </div>
-      </section>
-    </aside>
+    <div class="timer-orb">
+      <canvas id="timerRing" width="380" height="380" style="position: absolute;"></canvas>
+      <div id="timerDisplay">25:00</div>
+    </div>
+
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <div class="hide-on-focus"><input type="number" id="userMinutes" placeholder="25"></div>
+        <button class="btn-engage" id="timerBtn" onclick="toggleTimer()" style="min-width: 180px;">ENGAGE MISSION</button>
+        <button class="btn-secondary" onclick="toggleFocus()">DEEP WORK</button>
+    </div>
   </main>
+
+  <aside class="col hide-on-focus">
+    <div class="glass-card">
+        <small style="letter-spacing: 2px; color: var(--accent); font-weight: 800;">AI PROTOCOL</small>
+        <p id="aiSuggestion" style="font-weight: 600; line-height: 1.6; margin-top: 15px; font-size: 0.95rem;"></p>
+        <button id="roastToggle" class="btn-secondary" style="width: 100%; margin-top: 10px;">👹 ROAST: OFF</button>
+    </div>
+  </aside>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  let state = JSON.parse(localStorage.getItem('studyAppElite')) || { subjects: {}, examDate: "", history: [] };
-  let timerSec = 1500, tInt = null;
-
-  const quotes = [
-    "Focus on being productive instead of busy.",
-    "Believe you can and you're halfway there.",
-    "Don't stop until you're proud.",
-    "Small steps lead to big results.",
-    "Expertise is just focused practice."
-  ];
-
-  function sync() {
-    localStorage.setItem('studyAppElite', JSON.stringify(state));
-    renderAll();
+/* ======================
+   AI LIBRARY & ENGINE
+====================== */
+const AI_LIBRARY = {
+  idle: {
+    normal: ["System idle. Select a task.", "Choose your next objective.", "Precision requires direction."],
+    roast: ["You've been idle long enough. Life is passing by.", "Staring won't get the work done. Execute.", "Elite users don't idle. They work."]
+  },
+  focus: {
+    normal: ["Focus window active. Protect this session.", "Ignore distractions. This matters.", "Deep work in progress. Stay locked."],
+    roast: ["If you alt-tab now, you're weak.", "This is the part where people quit. Don't.", "Stay focused. Prove you're not average."]
+  },
+  complete: {
+    normal: ["Session complete. Discipline confirmed.", "Objective secured. Take a break.", "Execution successful. Reset and prepare."],
+    roast: ["Finally. Took you long enough.", "Not bad. Don't let it go to your head.", "Congrats. Now do it again."]
+  },
+  neglect: {
+    normal: ["You’ve been neglecting {subject}. Consider prioritizing it.", "{subject} hasn’t received attention recently.", "Balance check: {subject} is falling behind."],
+    roast: ["You keep avoiding {subject}. Afraid?", "{subject} isn’t going to study itself.", "At this rate, {subject} will be your downfall."]
   }
+};
 
-  function addSubject() { const n = prompt("Subject Name:"); if(n) { state.subjects[n] = { chapters: {} }; sync(); } }
-  function addChapter(s) { const n = prompt(`Chapter for ${s}:`); if(n) { state.subjects[s].chapters[n] = 0; sync(); } }
-  function updateChapter(s, c) { 
-    const p = prompt(`Set progress for ${c} (0-100):`); 
-    if(p !== null) { 
-        state.subjects[s].chapters[c] = Math.min(100, Math.max(0, parseInt(p))); 
-        state.history.push({ t: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), v: getGlobalAvg() });
-        sync(); 
-    } 
+/* ======================
+   STATE
+====================== */
+const state = {
+  subjects: JSON.parse(localStorage.getItem("studyData")) || [],
+  streak: Number(localStorage.getItem("streak")) || 0,
+  roastMode: false,
+  activeSubjectIndex: null,
+  sessionStartTime: null,
+  timer: { interval: null, remaining: 1500, total: 1500, status: "idle" },
+  ai: { lastMessage: null }
+};
+
+state.subjects.forEach(sub => sub.stats ??= { sessions: 0, secondsFocused: 0, lastSession: null });
+
+/* ======================
+   AI LOGIC
+====================== */
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function getMostNeglectedSubject() {
+  if (state.subjects.length < 2) return null;
+  return state.subjects.reduce((worst, current) => {
+    if (!current.stats.lastSession) return current;
+    if (!worst.stats.lastSession) return worst;
+    return new Date(current.stats.lastSession) < new Date(worst.stats.lastSession) ? current : worst;
+  });
+}
+
+function runAIProtocol(context) {
+  const mode = state.roastMode ? "roast" : "normal";
+  let message;
+
+  switch (context) {
+    case "idle": message = pick(AI_LIBRARY.idle[mode]); break;
+    case "focus": message = pick(AI_LIBRARY.focus[mode]); break;
+    case "complete": message = pick(AI_LIBRARY.complete[mode]); break;
+    case "analyze":
+      const neg = getMostNeglectedSubject();
+      if (neg) message = pick(AI_LIBRARY.neglect[mode]).replace("{subject}", neg.name.toUpperCase());
+      break;
   }
+  if (message) { aiSuggestion.textContent = `"${message}"`; state.ai.lastMessage = message; }
+}
 
-  function getGlobalAvg() {
-    let subTotals = Object.keys(state.subjects).map(s => {
-        let chaps = Object.values(state.subjects[s].chapters);
-        return chaps.length ? chaps.reduce((a,b)=>a+b,0)/chaps.length : 0;
-    });
-    return subTotals.length ? Math.round(subTotals.reduce((a,b)=>a+b,0)/subTotals.length) : 0;
-  }
-
-  function renderAll() {
-    const container = document.getElementById('subjectsContainer');
-    container.innerHTML = "";
-    let totalChaps = 0, doneChaps = 0, lowestProg = 101, priorityTask = "";
-
-    for (let s in state.subjects) {
-        let chaps = state.subjects[s].chapters;
-        let cKeys = Object.keys(chaps);
-        let subAvg = cKeys.length ? Math.round(Object.values(chaps).reduce((a,b)=>a+b,0)/cKeys.length) : 0;
-        
-        let html = `<div class="subject-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <strong>${s} (${subAvg}%)</strong>
-                <button class="btn-outline" style="padding:4px 8px;" onclick="addChapter('${s}')">+ Chapter</button>
-            </div>
-            <div class="progress-container"><div class="progress-bar" style="width:${subAvg}%"></div></div>
-            <div class="chapter-list">`;
-        
-        cKeys.forEach(c => {
-            totalChaps++;
-            if(chaps[c] >= 100) doneChaps++;
-            else if(chaps[c] < lowestProg) { lowestProg = chaps[c]; priorityTask = `${s}: ${c}`; }
-
-            let icon = chaps[c] >= 100 ? '✅' : (chaps[c] > 0 ? '⏳' : '🛑');
-            html += `<div class="chapter-item">
-                <span>${icon} ${c}</span>
-                <div>
-                    <strong style="margin-right:10px">${chaps[c]}%</strong>
-                    <button class="btn-outline" style="padding:2px 5px;" onclick="updateChapter('${s}','${c}')">Edit</button>
-                </div>
-            </div>`;
-        });
-        container.innerHTML += html + `</div></div>`;
+/* ======================
+   CORE ACTIONS
+====================== */
+function toggleTimer() {
+  const mins = Number(document.getElementById("userMinutes").value) || 25;
+  if (state.timer.status === "running") {
+    clearInterval(state.timer.interval);
+    state.timer.status = "paused";
+    document.getElementById("timerBtn").textContent = "RESUME MISSION";
+  } else {
+    if (state.timer.status === "idle" || state.timer.status === "complete") {
+      state.timer.total = mins * 60;
+      state.timer.remaining = state.timer.total;
     }
-
-    document.getElementById('statTotal').innerText = totalChaps;
-    document.getElementById('statDone').innerText = doneChaps;
-    document.getElementById('statLeft').innerText = totalChaps - doneChaps;
-    document.getElementById('aiSuggestion').innerText = priorityTask ? `Focus on ${priorityTask}` : "All current chapters complete! 🌟";
-    
-    if(state.examDate) {
-        let days = Math.ceil((new Date(state.examDate) - new Date())/(1000*60*60*24));
-        document.getElementById('statDays').innerText = days > 0 ? days : "Exam Day!";
-    }
-    updateChart();
+    state.sessionStartTime = Date.now();
+    state.timer.status = "running";
+    runAIProtocol("focus");
+    document.getElementById("timerBtn").textContent = "ABORT";
+    state.timer.interval = setInterval(() => {
+      state.timer.remaining--; renderTimer();
+      if (state.timer.remaining <= 0) completeSession();
+    }, 1000);
   }
+}
 
-  /* Utility Functions */
-  function exportData() { window.open("data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state))); }
-  function importData() {
-    const input = document.createElement('input'); input.type = 'file';
-    input.onchange = e => {
-        const reader = new FileReader(); reader.readAsText(e.target.files[0],'UTF-8');
-        reader.onload = r => { state = JSON.parse(r.target.result); sync(); }
-    }; input.click();
+function completeSession() {
+  clearInterval(state.timer.interval);
+  state.timer.status = "complete";
+  const elapsed = Math.floor((Date.now() - state.sessionStartTime) / 1000);
+  if (state.activeSubjectIndex !== null) {
+    const sub = state.subjects[state.activeSubjectIndex];
+    sub.stats.sessions++; sub.stats.secondsFocused += elapsed;
+    sub.stats.lastSession = new Date().toISOString();
   }
+  state.streak++; updateStats(); victoryParticles(); runAIProtocol("complete");
+  document.getElementById("timerBtn").textContent = "MISSION COMPLETE";
+  renderSubjects(); 
+}
 
-  function handleTimer() {
-    if(tInt) { clearInterval(tInt); tInt = null; document.getElementById('timerBtn').innerText="Resume"; }
-    else {
-        document.getElementById('timerBtn').innerText="Pause";
-        document.getElementById('quoteDisplay').innerText = `"${quotes[Math.floor(Math.random()*quotes.length)]}"`;
-        tInt = setInterval(() => {
-            timerSec--;
-            document.getElementById('timerDisplay').innerText = `${Math.floor(timerSec/60).toString().padStart(2,'0')}:${(timerSec%60).toString().padStart(2,'0')}`;
-            if(timerSec<=0) { clearInterval(tInt); alert("Session Done!"); timerSec=1500; }
-        }, 1000);
-    }
-  }
+/* ======================
+   RENDER & HELPERS
+====================== */
+function renderTimer() {
+  const m = String(Math.floor(state.timer.remaining / 60)).padStart(2, "0");
+  const s = String(state.timer.remaining % 60).padStart(2, "0");
+  document.getElementById("timerDisplay").textContent = `${m}:${s}`;
+  drawProgress(state.timer.remaining / state.timer.total);
+}
 
-  let myChart;
-  function updateChart() {
-    const ctx = document.getElementById('chart').getContext('2d');
-    if(myChart) myChart.destroy();
-    myChart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: state.history.slice(-10).map(h=>h.t), datasets: [{ label: 'Mastery', data: state.history.slice(-10).map(h=>h.v), borderColor: '#6366f1', fill: true, backgroundColor: 'rgba(99,102,241,0.05)', tension: 0.4 }] },
-        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
-    });
-  }
+function drawProgress(pct) {
+  const ctx = document.getElementById('timerRing').getContext("2d");
+  ctx.clearRect(0,0,380,380);
+  ctx.beginPath(); ctx.arc(190,190,170,0,Math.PI*2); ctx.strokeStyle="rgba(255,255,255,0.05)"; ctx.lineWidth=4; ctx.stroke();
+  ctx.beginPath(); ctx.arc(190,190,170,-Math.PI/2,-Math.PI/2+Math.PI*2*pct);
+  ctx.strokeStyle="#8b5cf6"; ctx.lineWidth=8; ctx.lineCap='round'; ctx.shadowBlur=20; ctx.shadowColor="#8b5cf6"; ctx.stroke(); ctx.shadowBlur=0;
+}
 
-  function toggleFocusMode() { document.body.classList.toggle('focus-active'); }
-  function saveSettings() { state.examDate = document.getElementById('examDate').value; sync(); }
-  function deleteSub(n) { if(confirm(`Delete ${n}?`)) { delete state.subjects[n]; sync(); } }
-  
-  document.getElementById('examDate').value = state.examDate;
-  renderAll();
+function renderSubjects() {
+  const container = document.getElementById("subjectsContainer");
+  container.innerHTML = "";
+  state.subjects.forEach((sub, sIdx) => {
+    const block = document.createElement("div");
+    block.className = "subject-block";
+    block.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong style="color:var(--primary);font-size:0.8rem;">${sub.name.toUpperCase()}</strong><br>
+          <small style="opacity:0.5;font-size:0.65rem">${Math.round(sub.stats.secondsFocused/60)} min · ${sub.stats.sessions} sess</small>
+        </div>
+        <button onclick="addTask(${sIdx})" style="padding:2px 8px;font-size:0.7rem;background:transparent;border:1px solid var(--border);color:white">+</button>
+      </div>
+      ${sub.tasks.map((t, tIdx) => `
+        <div class="task-item" onclick="toggleTask(${sIdx}, ${tIdx})">
+          <div style="width:10px;height:10px;border:2px solid var(--primary);background:${t.done ? "var(--primary)" : "transparent"}"></div>
+          <span style="${t.done ? "text-decoration:line-through;opacity:0.4" : ""}">${t.name}</span>
+        </div>
+      `).join("")}
+    `;
+    container.appendChild(block);
+  });
+}
+
+function toggleTask(sIdx, tIdx) {
+  const task = state.subjects[sIdx].tasks[tIdx];
+  task.done = !task.done;
+  state.activeSubjectIndex = task.done ? null : sIdx;
+  document.getElementById("currentTaskDisplay").textContent = task.done ? "SYSTEM IDLE" : task.name.toUpperCase();
+  if (!task.done) runAIProtocol("focus"); else runAIProtocol("idle");
+  renderSubjects(); updateStats();
+}
+
+function updateStats() {
+  const done = state.subjects.flatMap(s => s.tasks).filter(t => t.done).length;
+  document.getElementById("statDone").textContent = done;
+  document.getElementById("statStreak").textContent = state.streak;
+  localStorage.setItem("studyData", JSON.stringify(state.subjects));
+  localStorage.setItem("streak", state.streak);
+}
+
+function victoryParticles() {
+  const ctx = document.getElementById('timerRing').getContext("2d");
+  let pArr = Array.from({length:45},()=>({x:190,y:190,vx:(Math.random()-0.5)*14,vy:(Math.random()-0.5)*14,life:1,color:Math.random()>0.5?"#8b5cf6":"#ec4899"}));
+  (function anim(){
+    ctx.clearRect(0,0,380,380);
+    pArr.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.025;ctx.globalAlpha=p.life;ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,4,4);});
+    pArr=pArr.filter(p=>p.life>0);
+    if(pArr.length) requestAnimationFrame(anim); else renderTimer();
+  })();
+}
+
+function addSubject() {
+  const n = prompt("Subject ID?");
+  if (n) { state.subjects.push({ name:n, tasks:[], stats:{sessions:0,secondsFocused:0,lastSession:null}}); renderSubjects(); updateStats(); }
+}
+
+function addTask(i) {
+  const n = prompt("Objective?");
+  if (n) { state.subjects[i].tasks.push({ name:n, done:false }); renderSubjects(); updateStats(); }
+}
+
+function toggleFocus() { document.body.classList.toggle("focus-active"); }
+
+document.getElementById("roastToggle").onclick = () => {
+  state.roastMode = !state.roastMode;
+  document.getElementById("roastToggle").textContent = state.roastMode ? "👹 ROAST: ON" : "👹 ROAST: OFF";
+  runAIProtocol("idle");
+};
+
+// Auto-Analyze Passive Intelligence
+setInterval(() => { if(state.timer.status === "idle") runAIProtocol("analyze"); }, 120000);
+
+// Init
+runAIProtocol("idle");
+renderSubjects(); renderTimer(); updateStats();
 </script>
 </body>
 </html>
